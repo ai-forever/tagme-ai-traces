@@ -9,15 +9,15 @@ description = "TagMe AI Traces module"
 authors = [{name = "dmpresnukhin@sberbank.ru"}]
 readme = "README.md"
 requires-python = ">=3.9"
-
-[project.dependencies]
-aiohttp = "*"
-pandas = "*"
-requests = "*"
-langchain-core = ">=0.1"
-langchain-gigachat = "*"
-dacite = "*"
-langchain = "*"
+dependencies = [
+    "aiohttp",
+    "pandas",
+    "requests",
+    "langchain-core >=0.1",
+    "langchain-gigachat",
+    "dacite",
+    "langchain",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
