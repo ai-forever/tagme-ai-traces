@@ -4,3 +4,4 @@ requests
 langchain-core>=0.1
 langchain_gigachat
 dacite
+langchain
