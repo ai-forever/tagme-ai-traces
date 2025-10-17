@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tagme_ai_traces"
-version = "0.2.3"
+version = "0.2.4"
 description = "TagMe AI Traces module"
 authors = [{name = "dmpresnukhin@sberbank.ru"}]
 readme = "README.md"

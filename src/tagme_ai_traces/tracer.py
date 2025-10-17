@@ -192,7 +192,7 @@ class TagMeAgentTracer(AsyncCallbackHandler):
             tid = self._thread_id
             funcs_snapshot = list(self.functions)
             dialog_snapshot = list(self.dialog)
-            meta_snapshot = {**self.metadata, "flush_reason": reason, "ts": time.time()}
+            meta_snapshot = self.metadata | {"flush_reason": reason, "ts": time.time()}
 
             self.reset_cache()
 
@@ -244,11 +244,12 @@ class TagMeAgentTracer(AsyncCallbackHandler):
             logger.debug("Thread id changed from %s to %s, flushing previous conversation.", self._thread_id, tid)
             await self.flush(reason="thread_switch")
 
-        inv = kw.get("invocation_params") or {}
-        inv_filtered = {k: inv.get(k) for k in _INV_KEYS if k in inv}
-        funcs = _extract_functions(inv)
-        batch = messages[0] if messages else []
-        dialog = _batch_msgs_to_chat(batch)
+        inv: dict[str, Any] = kw.get("invocation_params", {})
+        meta: dict[str, Any] = kw.get("metadata", {})
+        inv_filtered: Dict[str, Any] = {k: inv.get(k) for k in _INV_KEYS if k in inv}
+        funcs: List[FunctionDef] = _extract_functions(inv)
+        batch: List[BaseMessage] = messages[0] if messages else []
+        dialog: List[ChatMessage] = _batch_msgs_to_chat(batch)
 
         async with self._lock:
             logger.debug("Initialized tracing for thread_id %s. Captured %d prompt message(s).", tid, len(self.dialog))
@@ -256,7 +257,7 @@ class TagMeAgentTracer(AsyncCallbackHandler):
             self._thread_id = tid
             self.functions = funcs
             self.dialog = dialog
-            self.metadata = {"thread_id": tid, "invocation_params": inv_filtered}
+            self.metadata = {"thread_id": tid, "invocation_params": inv_filtered} | meta
 
     async def on_llm_end(self, response: LLMResult, **_: Any) -> None:
         """Process the end of an LLM response generation.
