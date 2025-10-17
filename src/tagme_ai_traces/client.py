@@ -153,6 +153,8 @@ class TagmeIntegrationClientAsync(TagmeIntegrationClient):
     async def send_dialog(self, dialog: DialogData, ignore_missing_functions: Optional[bool] = None):
         """Submit a dialog transcript for annotation."""
 
+        if dialog.metadata:
+            dialog.metadata.setdefault("project", os.environ.get("TAGME_TRACING_PROJECT_NAME", "default"))
         return await self.request(
             hdrs.METH_POST,
             "/api/dialog",
